@@ -3,3 +3,5 @@ venv
 .pytest_cache
 src/__pycache__
 test/__pycache__
+outputs
+inputs
