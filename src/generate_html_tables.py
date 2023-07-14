@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import re
 
 class GenerateHTMLTables():
 
@@ -14,6 +15,7 @@ class GenerateHTMLTables():
         Returns:
             list<str>: list of html table strings, each defining one service
         """
+        self.services_df = self.prepare_data(self.services_df)
         html_tables = []
         for _, service in self.services_df.iterrows():
             html_tables.append(self.generate_for_one_service(service))
@@ -44,6 +46,20 @@ class GenerateHTMLTables():
             search_index = found_end_index+1
         return html
     
+    def prepare_data(self, services_df : pd.DataFrame):
+        services_df["service_name"] = services_df["name"]
+        services_df["organisation"] = services_df["organization.name"]
+        services_df["description"] = services_df["description"].map(lambda x: self.remove_html(x))
+        services_df["website"] = services_df["url"].map(lambda x: x if x != "" else "404 Website not found")
+        services_df["telephone"] = services_df["contacts"][0][0]["phones"][0]["number"]
+        services_df["last_assured_date"] = services_df["pc_metadata.date_assured"]
+        return services_df
+        
+    def remove_html(self, string):
+        # TODO maybe keep formatting html such as bold and italics
+        p = re.compile(r'<.*?>')
+        return p.sub('', string)
+
 def generate_html_tables(services_df : pd.DataFrame):
     gen_html = GenerateHTMLTables(services_df)
     return gen_html.generate_for_all_services()

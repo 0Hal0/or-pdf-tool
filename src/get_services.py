@@ -3,9 +3,9 @@ import pandas as pd
 
 class GetServices:
     
-    def __init__(self, url):
+    def __init__(self, url, num_services=9999):
         self.single_service_url = url
-        self.all_services_url = url + "?per_page=10"
+        self.all_services_url = url + f"?per_page={num_services}"
         self.services : pd.DataFrame =pd.DataFrame()    
         
     def get_all_services(self):
@@ -38,7 +38,7 @@ class GetServices:
     
     
 def get_services_from_api(url):
-    get_services = GetServices(url)
+    get_services = GetServices(url, 5)
     get_services.get_all_services()
     return get_services.services
     
