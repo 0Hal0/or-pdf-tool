@@ -13,9 +13,13 @@ class GenerateReport():
     
     def create_service_type_report(self, service_tables, service_type, file_path=None):
         self._report += f'\n<br>\n<h1>Service Type: {service_type}</h1>'
+        index = 0
         for table in service_tables:
             self._report += '\n'
             self._report += table
+            if index > 1:
+                self._report += '<br><br><br>\n'
+            index +=  1
     
         report = self._report + self._report_end
 
