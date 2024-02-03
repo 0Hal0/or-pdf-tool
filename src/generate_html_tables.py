@@ -52,7 +52,7 @@ class GenerateHTMLTables():
         services_df["organisation"] = services_df["organization.name"]
         services_df["description"] = services_df["description"].map(lambda x: self.remove_html(x))
         services_df["website"] = services_df["url"]#.map(lambda x: x if x != "" else "404 Website not found")
-        services_df["telephone"] = services_df["contacts"][0][0]["phones"][0]["number"]
+        #services_df["telephone"] = services_df["contacts"][0][0]["phones"][0]["number"]
         services_df["last_assured_date"] = services_df["pc_metadata.date_assured"]
         return services_df
         

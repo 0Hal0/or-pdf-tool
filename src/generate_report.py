@@ -10,9 +10,15 @@ class GenerateReport():
         with open("resources\\report_template.html") as template:
             self.report = template
         return
-    
-    def create_service_type_report(self, service_tables, service_type, file_path=None):
+
+
+    def create_service_type_header(self, service_type):
         self._report += f'\n<br>\n<h1>Service Type: {service_type}</h1>'
+
+    def create_service_client_header(self, client):
+        self._report += f'\n<br>\n<h1>{client} services</h1>'
+
+    def create_report(self, service_tables, file_path=None):
         index = 0
         for table in service_tables:
             self._report += '\n'
@@ -39,4 +45,10 @@ class GenerateReport():
 def generate_report(service_tables : list[str], service_type=None, file_path=None):
     report_generator = GenerateReport()
     if service_type != None:
-        report_generator.create_service_type_report(service_tables, service_type, file_path)
+        report_generator.create_service_type_header(service_type)
+        report_generator.create_report(service_tables, file_path)
+
+def generate_client_report(service_tables : list[str], client, file_path=None):
+    report_generator = GenerateReport()
+    report_generator.create_service_client_header(client)
+    report_generator.create_report(service_tables, file_path)

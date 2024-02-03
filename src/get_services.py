@@ -1,9 +1,12 @@
 import requests
 import pandas as pd
+import os
+
+DEFAULT_URL = "https://penninelancs.openplace.directory/o/ServiceDirectoryService/v2/services/"
 
 class GetServices:
     
-    def __init__(self, url, num_services=9999):
+    def __init__(self, url=DEFAULT_URL, num_services=10):
         self.single_service_url = url
         self.all_services_url = url + f"?per_page={num_services}"
         self.services : pd.DataFrame =pd.DataFrame()    
@@ -28,7 +31,13 @@ class GetServices:
         #self.services["service_taxonomys"] = self.services["service_taxonomys"].map(lambda x: pd.json_normalize(x))
         
             
-    
+    def get_services_by_ids(self, ids : list):
+        all_services = []
+        for id in ids:
+            all_services.append(self.get_service(id))
+        self.services = pd.json_normalize(all_services)
+        return self.services
+
     def get_service(self, id):
         try:
             response = requests.get(self.single_service_url + id)
@@ -38,7 +47,12 @@ class GetServices:
     
     
 def get_services_from_api(url):
-    get_services = GetServices(url, 5)
+    get_services = GetServices(url)
     get_services.get_all_services()
     return get_services.services
+
+def get_services_by_client(client, url=DEFAULT_URL):
+    client_services_df = pd.read_csv("resources\\data\\clientsServiceIds.csv")
+    services = list(client_services_df[client])
+    return GetServices(url).get_services_by_ids(services)
     
