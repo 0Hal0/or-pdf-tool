@@ -43,6 +43,7 @@ class GetServices:
             response = requests.get(self.single_service_url + id)
         except:
             print("Error fetching service " + id)
+            return Exception("Error fetching services")
         return response.json()
     
     
