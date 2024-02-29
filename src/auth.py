@@ -24,7 +24,7 @@ def login_post():
     login_user(user, remember=remember)
     return redirect(url_for("main.profile"))
 
-@auth.route("/add/admin", methods=["POST"])
+@auth.route("/add/user", methods=["POST"])
 @login_required
 def add_admin_post():
     #Authorization required here
@@ -38,7 +38,7 @@ def add_admin_post():
         flash("This username already exists")
         return redirect(url_for("auth.add_admin"))
 
-    new_user = User(username=username, password=generate_password_hash(password))
+    new_user = User(username=username, password=generate_password_hash(password), userType=UserTypes.user)
 
     db.session.add(new_user)
     db.session.commit()
@@ -48,12 +48,12 @@ def add_admin_post():
 @auth.route("/add/admin")
 @login_required
 def add_admin():
-    return render_template("signup.html")
+    return "Add Admin"
 
-@auth.route("/add/company")
+@auth.route("/add/user")
 @login_required
 def add_user():
-    return "Add company"
+    return render_template("add_user.html")
 
 @auth.route("/logout")
 @login_required
