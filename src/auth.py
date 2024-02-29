@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import User
-from . import db
+from .models import User, UserTypes, db
 
 auth = Blueprint("auth", __name__)
 
@@ -26,6 +25,7 @@ def login_post():
     return redirect(url_for("main.profile"))
 
 @auth.route("/add/admin", methods=["POST"])
+@login_required
 def add_admin_post():
     #Authorization required here
     print("WTF")
@@ -46,11 +46,13 @@ def add_admin_post():
     return redirect(url_for("auth.login"))
 
 @auth.route("/add/admin")
+@login_required
 def add_admin():
     return render_template("signup.html")
 
 @auth.route("/add/company")
-def add_company():
+@login_required
+def add_user():
     return "Add company"
 
 @auth.route("/logout")
