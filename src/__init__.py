@@ -1,13 +1,9 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager
 
+from .models import db, generate_default_user
 
-class Base(DeclarativeBase):
-  pass
 
-db = SQLAlchemy(model_class=Base)
 
 def create_app():
     app = Flask(__name__)
@@ -23,8 +19,9 @@ def create_app():
 
     from . import models
     with app.app_context():
-        db.create_all()
-        db.session.commit()
+      db.create_all()
+      db.session.commit()
+      generate_default_user()
 
     @login_manager.user_loader
     def load_user(user_id):

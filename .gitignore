@@ -5,3 +5,8 @@ src/__pycache__
 test/__pycache__
 outputs
 inputs
+.env
+*.pdf
+instance/db.sqlite
+resources/temp_html_report.html
+resources/data/openplace-save.csv
