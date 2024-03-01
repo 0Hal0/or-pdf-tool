@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="hero is-fullheight is-fullwidth is-primary">
+<section class="hero is-primary is-fullheight">
 
     <div class="hero-head">
       <p class="title">
@@ -10,9 +10,67 @@
 
     </div>
     <div class="hero-body">
-        <p class="subtitle">
-            Primary subtitle
-        </p>
-    </div>
-  </section>
+        <section class="hero">
+            <div class="hero-head">
+                <p class="title">
+                    View and edit company services
+                </p>
+            </div>
+            <div class="hero-body">
+
+                <div class="container is-fullwidth">
+                    <div class="columns is-fullwidth">
+        
+                        <div class="column">
+                            <p class="subtitle" >Select a company:</p>
+                            <div class="select">
+                                <select id="user-selector" name="user" method="GET" action="/users">
+                                    {% for user in users %}
+                                        <option value="{{user}}">{{user}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+        
+                        <div class="column">
+                            <div class="panel has-background-white">
+                                <p class="panel-heading">
+                                    Services
+                                </p>
+                                <div class="panel-block">
+                                    <a class="panel-block is-active">
+                                        <span class="panel-icon">
+                                            <i class="fas fa-book" aria-hidden="true"></i>
+                                        </span>
+                                        Test Service
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <p>This is where service info will go</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+    
+        </section>
+    
+        <section class="hero">
+
+        </section>
+    
+        </div>
+        <div class="container">
+            <div class="column">
+                <p class="title">
+                    Download a custom report
+                </p>
+            </div>
+        </div>
+        
+
+</section>
 {% endblock %}
