@@ -24,6 +24,10 @@ class UserTypes:
     admin = "Admin"
     user = "User"
 
+class services(db.Model):
+    id = db.Column(db.String(100), primary_key = True)
+    
+
 
 def generate_default_user():
     if not User.query.filter_by(username = secrets["DB_ADMIN_USER"]).all():
