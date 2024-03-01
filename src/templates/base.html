@@ -6,56 +6,53 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Flask Auth Example</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.4/css/bulma.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="{{url_for('static', filename='script.js')}}"></script>
 </head> 
 
 <body>
-    <section class="hero is-primary">
-
-        <div class="hero-head">
-            <nav class="navbar">
-                <div class="container">
-                    <div id="navbarMenuHeroA" class="navbar-menu">
-                        <div class="navbar-end">
-                            <a href="{{ url_for('main.index') }}" class="navbar-item">
-                                Home
-                            </a>
-                            <a href="{{ url_for('main.profile') }}" class="navbar-item">
-                                Profile
-                            </a>
-                            <a href="{{ url_for('auth.login') }}" class="navbar-item">
-                                Login
-                            </a>
-                            {%if current_user.userType == 'Owner' %}
-                            <a href="{{ url_for('auth.add_admin') }}" class="navbar-item">
-                                Add Admin
-                            </a>
-                            {% endif %}
-                            {%if current_user.userType == 'Admin' %}
-                            <a href="{{ url_for('auth.add_user') }}" class="navbar-item">
-                                Add User
-                            </a>
-                            {% endif %}
-                            {%if current_user.is_authenticated %}
-                            <a href="{{ url_for('auth.logout') }}" class="navbar-item">
-                                Logout
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <p class="navbar-item title">Service PDF Tool</p>
+            </div>
+            <div id="navbarMenuHeroA" class="navbar-menu">
+                <div class="navbar-end">
+                    <a href="{{ url_for('main.index') }}" class="navbar-item">
+                        Home
+                    </a>
+                    <a href="{{ url_for('main.profile') }}" class="navbar-item">
+                        Profile
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="navbar-item">
+                        Login
+                    </a>
+                    {%if current_user.userType == 'Owner' %}
+                    <a href="{{ url_for('auth.add_admin') }}" class="navbar-item">
+                        Add Admin
+                    </a>
+                    {% endif %}
+                    {%if current_user.userType == 'Admin' %}
+                    <a href="{{ url_for('auth.add_user') }}" class="navbar-item">
+                        Add User
+                    </a>
+                    {% endif %}
+                    {%if current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.logout') }}" class="navbar-item">
+                        Logout
+                    </a>
+                    {% endif %}
                 </div>
-            </nav>
-        </div>
-
-        <div class="hero-body">
-            <div class="container is-fluid ">
-               {% block content %}
-               {% endblock %}
             </div>
         </div>
-    </section>
+    </nav>
+
+       {% block content %}
+       {% endblock %}
+
+
 </body>
 
 </html>
