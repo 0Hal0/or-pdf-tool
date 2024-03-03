@@ -1,5 +1,6 @@
 """Module for the ServiceManager class"""
 import os
+import re
 import requests
 import pandas as pd
 
@@ -72,12 +73,20 @@ class ServiceManager:
         Returns:
             pd.DataFrame: dataframe of service information 
         """
-        df = self.try_get_last_services(user)
-        return self.get_services_by_ids(df["id"].to_list())
+        ids = self.get_service_ids_for_user(user)
+        return self.prepare_data(self.get_services_by_ids(ids))
 
     def get_save_path(self, user : str):
         """Gets the path to save service history for a given user"""
         return f"{SERVICE_SAVE_PATH}{user}.parquet"
+
+    def get_service_ids_for_user(self, user: str):
+        """Gets a list of service ids for the given user"""
+        save_path = self.get_save_path(user)
+        if os.path.exists(save_path):
+            df = pd.read_parquet(save_path)
+            return df["id"].to_list()
+        raise ValueError("Error: Could not find any services for given user, try adding services first")
 
     def try_get_last_services(self, user : str):
         """Gets the last saved services for a given user"""
@@ -91,7 +100,54 @@ class ServiceManager:
         """Saves the given services for a given user"""
         services_df.to_parquet(self.get_save_path(user))
         return
-
+    
+    def prepare_data(self, services_df : pd.DataFrame):
+        df = pd.DataFrame()
+        df["id"] = services_df["id"]
+        if "name" in services_df:
+            df["service_name"] = services_df["name"]
+        else:
+            df["service_name"] = "404 Could not find service name"
+            return df
+        if "organization.name" in services_df:
+            df["organisation"] = services_df["organization.name"]
+        else:
+            df["organisation"] = ""
+        if "description" in services_df:
+            df["description"] = services_df["description"].map(self.remove_html)
+        else:
+            df["description"] = ""
+        if "attending_type" in services_df:
+            df["attending_type"] = services_df["attending_type"]
+        else:
+            df["attending_type"] = ""
+        if "url" in services_df:
+            df["website"] = services_df["url"]#.map(lambda x: x if x != "" else "404 Website not found")
+        #services_df["telephone"] = services_df["contacts"][0][0]["phones"][0]["number"]
+        try:
+            df["telephone"] = services_df["contacts"][0][0]["phones"][0]["number"]
+        except KeyError:
+            df["telephone"] = ""
+        except ValueError:
+            df["telephone"] = ""
+        except ArithmeticError:
+            df["telephone"] = ""
+        except Exception:
+            df["telephone"] = ""
+        if "email" in services_df:
+            df["email"] = services_df["email"]
+        else:
+            df["email"] = ""
+        if "pc_metadata.date_assured" in services_df:
+            df["last_assured_date"] = services_df["pc_metadata.date_assured"]
+        else:
+            df["last_assured_date"] = ""
+        return df
+    
+    def remove_html(self, string):
+        # maybe keep formatting html such as bold and italics
+        p = re.compile(r'<.*?>')
+        return p.sub('', string)
 
 def get_services_from_api(url):
     """ (deprecated) Gets all service from the specified API

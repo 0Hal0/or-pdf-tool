@@ -89,15 +89,19 @@ async function update_services(user){
 
 async function request_report(){
     user = document.getElementById("user-selector").value
+    highlight_changed = document.getElementById("highlight-changed").checked
+    save_history = document.getElementById("save-history").checked
+    only_changes = document.getElementById("only-changes").checked
 
     try {
-        response = await fetch(`/report/${user}`)
+        response = await fetch(`/report/${user}?highlight_changed=${highlight_changed}&save_history=${save_history}&only_changes=${only_changes}`)
         .then(res => res.blob())
         .then(blob => {
             var file = window.URL.createObjectURL(blob);
             window.open(file)
         })
     } catch (error) {
+        console.log(error)
         return
     }
 
