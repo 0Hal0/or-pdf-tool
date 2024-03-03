@@ -87,6 +87,22 @@ async function update_services(user){
     })
 }
 
+async function request_report(){
+    user = document.getElementById("user-selector").value
+
+    try {
+        response = await fetch(`/report/${user}`)
+        .then(res => res.blob())
+        .then(blob => {
+            var file = window.URL.createObjectURL(blob);
+            window.open(file)
+        })
+    } catch (error) {
+        return
+    }
+
+}
+
 window.onload = function () {
     var dropdown = document.querySelectorAll('.dropdown');
     dropdown.forEach(element => {

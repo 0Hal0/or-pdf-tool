@@ -11,6 +11,8 @@ class HtmlGenerator():
 
     def get_replace_value(self, service, column, old_services : pd.DataFrame = None):
         new_value = service[column]
+        if old_services == None:
+            return new_value
         old_service = old_services.loc[old_services["id"] == service["id"]]
         try:
             if self.old_services.empty:
@@ -31,12 +33,12 @@ class HtmlGenerator():
         Returns:
             list<str>: list of html table strings, each defining one service
         """
-        if old_services != None:
-            old_services_df = self.prepare_data(old_services)
+        if old_services is not None:
+            old_services = self.prepare_data(old_services)
         services_df = self.prepare_data(services)
         html_tables = []
         for _, service in services_df.iterrows():
-            html_tables.append(self.generate_for_one_service(service, old_services_df))
+            html_tables.append(self.generate_for_one_service(service, old_services))
         return html_tables
 
     def generate_for_one_service(self, service : pd.Series, old_services : pd.DataFrame = None):
@@ -68,12 +70,42 @@ class HtmlGenerator():
         return html
     
     def prepare_data(self, services_df : pd.DataFrame):
-        services_df["service_name"] = services_df["name"]
-        services_df["organisation"] = services_df["organization.name"]
-        services_df["description"] = services_df["description"].map(self.remove_html)
-        services_df["website"] = services_df["url"]#.map(lambda x: x if x != "" else "404 Website not found")
+        if "name" in services_df:
+            services_df["service_name"] = services_df["name"]
+        else:
+            services_df["service_name"] = "404 Could not find service name"
+            return services_df
+        if "organization.name" in services_df:
+            services_df["organisation"] = services_df["organization.name"]
+        else:
+            services_df["organisation"] = ""
+        if "description" in services_df:
+            services_df["description"] = services_df["description"].map(self.remove_html)
+        else:
+            services_df["description"] = ""
+        if "attending_type" in services_df:
+            services_df["attending_type"] = services_df["attending_type"]
+        else:
+            services_df["attending_type"] = ""
+        if "url" in services_df:
+            services_df["website"] = services_df["url"]#.map(lambda x: x if x != "" else "404 Website not found")
         #services_df["telephone"] = services_df["contacts"][0][0]["phones"][0]["number"]
-        services_df["last_assured_date"] = services_df["pc_metadata.date_assured"]
+        try:
+            services_df["telephone"] = services_df["contacts"][0][0]["phones"][0]["number"]
+        except KeyError:
+            services_df["telephone"] = ""
+        except ValueError:
+            services_df["telephone"] = ""
+        except ArithmeticError:
+            services_df["telephone"] = ""
+        except Exception:
+            services_df["telephone"] = ""
+        if "email" in services_df:
+            services_df["email"] = services_df["email"]
+        else:
+            services_df["email"] = ""
+        if "pc_metadata.date_assured" in services_df:
+            services_df["last_assured_date"] = services_df["pc_metadata.date_assured"]
         return services_df
         
     def remove_html(self, string):
