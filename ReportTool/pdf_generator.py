@@ -1,13 +1,15 @@
+"""Module for the PdfGenerator class"""
 import pdfkit
 
-class GenerateReport():
+class PdfGenerator():
+    """Class for generating a pdf report from html content"""
 
     _report = '<link rel="stylesheet" href="style.css"> \n<body>'
     _report_end = "\n</body>"
     _path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
 
     def __init__(self):
-        with open("resources\\report_template.html") as template:
+        with open("resources\\report_template.html", encoding="utf-8") as template:
             self.report = template
         return
 
@@ -34,7 +36,7 @@ class GenerateReport():
         return report
     
     def save_html_report_as_pdf(self, report, file_path='out.pdf'):
-        with open("resources\\temp_html_report.html", "w") as html_file:
+        with open("resources\\temp_html_report.html", "w", encoding="utf-8") as html_file:
             html_file.write(report)
         config = pdfkit.configuration(wkhtmltopdf=self._path_wkhtmltopdf)
         pdfkit.from_file("resources\\temp_html_report.html", file_path, configuration=config, options={"enable-local-file-access": ""})
@@ -43,12 +45,12 @@ class GenerateReport():
     
 
 def generate_report(service_tables : list[str], service_type=None, file_path=None):
-    report_generator = GenerateReport()
+    report_generator = PdfGenerator()
     if service_type != None:
         report_generator.create_service_type_header(service_type)
         report_generator.create_report(service_tables, file_path)
 
 def generate_client_report(service_tables : list[str], client, file_path=None):
-    report_generator = GenerateReport()
+    report_generator = PdfGenerator()
     report_generator.create_service_client_header(client)
     report_generator.create_report(service_tables, file_path)
