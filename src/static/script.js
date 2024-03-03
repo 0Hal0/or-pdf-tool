@@ -68,6 +68,25 @@ function save(){
     })
 }
 
+async function update_services(user){
+    try {
+        response = await fetch(`/services/${user}`)
+    } catch (error) {
+        return
+    }
+
+    services = await response.json()
+
+    service_panel = document.getElementById("service-panel")
+    panel_heading = service_panel.getElementsByClassName("panel-heading")[0]
+    service_panel.innerHTML = ""
+    service_panel.appendChild(panel_heading)
+
+    services.forEach(service =>{
+        service_panel.appendChild(createServicePanel(service))
+    })
+}
+
 window.onload = function () {
     var dropdown = document.querySelectorAll('.dropdown');
     dropdown.forEach(element => {
@@ -86,29 +105,16 @@ window.onload = function () {
     });
 
     var sel = document.getElementById("user-selector")
+    update_services(sel.value)
     sel.addEventListener("change", async (event) => {
 
         user_dropdown = document.getElementById("user-selector")
 
-        try {
-            response = await fetch(`/services/${user_dropdown.value}`)
-        } catch (error) {
-            return
-        }
-
-        services = await response.json()
-
-        service_panel = document.getElementById("service-panel")
-        panel_heading = service_panel.getElementsByClassName("panel-heading")[0]
-        service_panel.innerHTML = ""
-        service_panel.appendChild(panel_heading)
-
-        services.forEach(service =>{
-            service_panel.appendChild(createServicePanel(service))
-        })
+        await update_services(user_dropdown.value)
 
     });
 
+    
 
 
 };

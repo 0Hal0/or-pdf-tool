@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
 from .utils import is_admin, admin_required
-from .models import db, User, UserTypes
+from .models import User, UserTypes
 from ReportTool import service_manager
 
 main = Blueprint("main", __name__)
@@ -38,6 +38,5 @@ def get_services(user):
 
 @main.route("/services/<user>/add", methods = ["POST"] )
 def add_services(user):
-    print(request.json["services"])
     service_manager.add_services_for_user(user, request.json["services"])
     return ""
