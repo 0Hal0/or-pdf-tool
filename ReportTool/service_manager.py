@@ -40,7 +40,10 @@ class ServiceManager:
         """
         all_services = []
         for service_id in ids:
-            all_services.append(self.get_service(service_id))
+            try:
+                all_services.append(self.get_service(service_id))
+            except requests.exceptions.RequestException as e:
+                print(e.strerror)
         self.services = pd.json_normalize(all_services)
         return self.services
 
@@ -54,10 +57,10 @@ class ServiceManager:
             JSON: json containing service information
         """
         try:
-            response = requests.get(self.single_service_url + service_id, timeout=60)
+            response = requests.get(self.single_service_url + service_id, timeout=10)
         except requests.exceptions.RequestException as e:
             print("Error fetching service " + service_id)
-            return Exception("Error fetching services" + e.strerror)
+            raise e
         return response.json()
 
     def get_services_for_user(self, user : str):

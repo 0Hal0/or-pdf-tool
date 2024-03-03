@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, send_file
 from flask_login import login_required, current_user
 from .utils import is_admin, admin_required
 from .models import User, UserTypes
-from ReportTool import service_manager
+from ReportTool import service_manager, ReportGenerator
 
 main = Blueprint("main", __name__)
 
@@ -40,3 +40,8 @@ def get_services(user):
 def add_services(user):
     service_manager.add_services_for_user(user, request.json["services"])
     return ""
+
+@main.route("/report/<user>")
+def generate_report(user):
+    file_path = ReportGenerator.generate_user_report(False, False, False, user)
+    return send_file(file_path, download_name=f"{user}-report.pdf", as_attachment=True)
