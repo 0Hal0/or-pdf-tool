@@ -24,3 +24,6 @@ def admin_required(get_user=import_user):
 
 def is_admin(user):
     return user.userType == UserTypes.admin
+
+def bool_parse(value : str):
+    return value.lower() == "true"

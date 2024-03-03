@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, send_file
 from flask_login import login_required, current_user
-from .utils import is_admin, admin_required
+from .utils import is_admin, admin_required, bool_parse
 from .models import User, UserTypes
 from ReportTool import service_manager, ReportGenerator
 
@@ -43,5 +43,9 @@ def add_services(user):
 
 @main.route("/report/<user>")
 def generate_report(user):
-    file_path = ReportGenerator.generate_user_report(False, False, False, user)
+    file_path = ReportGenerator.generate_user_report(
+        request.args.get("highlight_changed", default=False, type=bool_parse),
+        request.args.get("save_history", default=False, type=bool_parse),
+        request.args.get("only_changes", default=False, type=bool_parse),
+        user)
     return send_file(file_path, download_name=f"{user}-report.pdf", as_attachment=True)
