@@ -10,3 +10,4 @@ inputs
 instance/db.sqlite
 resources/temp_html_report.html
 resources/data/openplace-save.csv
+ReportTool/__pycache__/
