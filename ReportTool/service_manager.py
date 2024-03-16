@@ -10,24 +10,55 @@ SERVICE_SAVE_PATH = "resources\\data\\"
 class ServiceManager:
     """Class used to get and save services associated with a user
     """
-    def __init__(self, url=DEFAULT_URL, num_services=10):
+    def __init__(self, url=DEFAULT_URL):
         self.single_service_url = url
-        self.all_services_url = url + f"?per_page={num_services}"
+        self.paginated_services_url = url
         self.services : pd.DataFrame =pd.DataFrame()
 
     def get_all_services(self):
         """ (deprecated) Function gets all services in no order up to the limit num_services
         """
+        all_services = []
         try:
-            response = requests.get(self.all_services_url, timeout=120)
+            response = requests.get(self.paginated_services_url, timeout=120).json()
         except requests.exceptions.RequestException as e:
             print("Error fetching all services" + e.strerror)
-        services = response.json()["content"]
-        all_services= []
-        #self.services = pd.json_normalize(services, "content")
-        for service in services:
-            all_services.append(self.get_service(service["id"]))
-        self.services = pd.json_normalize(all_services)
+        for i in range(2, response["totalPages"]):
+            all_services = response["content"]
+            try:
+                response = requests.get(self.paginated_services_url+f"?page={str(i)}", timeout=120).json()
+            except requests.exceptions.RequestException as e:
+                print("Error fetching all services" + e.strerror)
+
+        services_df = pd.json_normalize(all_services)
+
+        return services_df
+
+    def get_all_services_detailed(self):
+        """ (deprecated) Function gets all services in no order up to the limit num_services
+        """
+        all_services = []
+        i=1
+        try:
+            response = requests.get(self.paginated_services_url, timeout=120).json()
+        except requests.exceptions.RequestException as e:
+            print("Error fetching all services" + e.strerror)
+        services = []
+        for i in range(2, response["totalPages"] + 1):
+            services = response["content"]
+            for service in services:
+                all_services.append(self.get_service(service["id"]))
+            try:
+                response = requests.get(self.paginated_services_url+f"?page={str(i)}", timeout=120).json()
+            except requests.exceptions.RequestException as e:
+                print("Error fetching all services" + e.strerror)
+
+
+        services_df = pd.json_normalize(all_services)
+
+        print(services_df)
+
+        services_df.to_csv("test\\test.csv")
 
 
     def get_services_by_ids(self, ids : list):
